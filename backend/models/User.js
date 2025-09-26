@@ -6,7 +6,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const userSchema=new mongoose.Schema(
     {
-        "email":{
+        email:{
             type:String,
             required:true,
             lowercase:true,
@@ -35,6 +35,10 @@ const userSchema=new mongoose.Schema(
         isLoggined:{
             type:Boolean,
             default:false
+        },
+        loginAttempts:{
+            type:Number,
+            default:0
         }
     },
     {
@@ -42,14 +46,14 @@ const userSchema=new mongoose.Schema(
     }
 )
 
-userSchema.method.comparePassword=function(plain){
+userSchema.methods.comparePassword=function(plain){
     return bcrypt.compare(plain,this.passwordHash)
 }
 
 
 
-userSchema.method.toSafeJSON=function(){
-    const obj = this.toObject({versionKey:false})
+userSchema.methods.toSafeJSON=function(){
+    const obj =this.toObject({versionKey:false})
     delete obj.passwordHash
     return obj
 }
