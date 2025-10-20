@@ -1,4 +1,4 @@
-.am-backdrop{
+.am-backdrop {
     position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.321);
@@ -10,18 +10,18 @@
         position: relative;
         width: min(92vw,42rem);
         border-radius: var(--radius-l);
-        box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.321);
+        box-shadow: 0 1rem 3rem  rgba(0, 0, 0, 0.321);
         padding: 2rem;
 
         .am-tabs{
             display: flex;
-            gap: .8rem;
+            gap:.8rem;
             margin-bottom: 1.2rem;
-            button{
-                flex: 1;
-                &.on{
+            button {
+                flex:1;
+                &.on {
                     background-color: var(--text);
-                    color: var(--bg);
+                    color:var(--bg)
                 }
             }
         }
@@ -34,6 +34,10 @@
             position: absolute;
             right: -4rem;
             top: 0;
+        }
+        .am-err {
+            color:#c00;
+            margin-top: .4rem;
         }
     }
 }
