@@ -24,13 +24,20 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.get("/", (_req, res) => res.send("PhotoMemo API OK"));
 
-const authRoutes=require("./routes/authRoutes")
-app.use("/api/auth",authRoutes)
+// authRoutes
+const authRoutes = require("./routes/authroutes")
+const uploadRoutes = require('./routes/upload')
+
+app.use("/api/auth", authRoutes)
+app.use("/api/upload", uploadRoutes)
+
+app.use((req, res) => {
+    res.status(404).json({ message: '요청하신 경로를 찾을 수 없슶니다.' })
+})
 
 
 
 app.use((req, res) => {
-
     res.status(500).json({ message: "서버 오류" });
 });
 
