@@ -94,14 +94,14 @@ function App() {
             requiredRole="admin"
           />}
         />
-        {/* 사용자 보호구역 */}
+       {/* 사용자 보호구역 */}
         <Route
           path='/user'
           element={
             <ProtectRoute
               user={user}
               isAuthed={isAuthed}
-              redirect='/admin/login'
+              redirect='/'
             />
           }
         >
