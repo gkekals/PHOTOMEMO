@@ -3,8 +3,8 @@ const router = express.Router()
 const multer = require('multer')
 const path = require('path')
 const { v4: uuidv4 } = require('uuid')
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
-const { presignPut } = require('../src/s3')
+const {PutObjectCommand } = require('@aws-sdk/client-s3')
+const { s3,presignPut,Bucket} = require('../src/s3')
 
 
 router.get('/ping', (req, res) => res.json({ ok: true }))
@@ -18,7 +18,7 @@ router.post('/presign', async (req, res) => {
             return res.status(400).json({ message: 'filename/contentType은 필수입니다.' })
         }
 
-        const key = `uploads/${Date.now()}-${uuidv4()}${path.extname(filename)}|| ""`
+        const key = `uploads/${Date.now()}-${uuidv4()}${path.extname(filename)}`
 
         const url = await presignPut(key, contentType)
 

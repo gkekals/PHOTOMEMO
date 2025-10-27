@@ -1,9 +1,9 @@
-const mongoose = require('mongoose')
+const mongoose =require('mongoose')
 
 
 const postSchema = new mongoose.Schema(
     {
-        user:{ 
+        user:{
             type:mongoose.Schema.Types.ObjectId,
             ref:'User',
             required:true
@@ -12,12 +12,12 @@ const postSchema = new mongoose.Schema(
             type:Number,
             required:true
         },
-        title:{
+        title :{
             type:String,
             required:true,
             trim:true
         },
-        content:{
+        content :{
             type:String,
             required:true,
             trim:true
@@ -50,7 +50,8 @@ const postSchema = new mongoose.Schema(
         timestamps:true
     }
 )
+postSchema.index({ user: 1, number: 1 }, { unique: true });
 
 const Post = mongoose.model("Post",postSchema)
 
-module.exports = Post
+module.exports= Post

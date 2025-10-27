@@ -2,7 +2,7 @@
     position: sticky;
     top: 0;
     z-index: 10;
-    .inner{
+    .inner {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -13,13 +13,13 @@
             color: var(--primary);
         }
 
-        .auth-area{
-            .welcome{
+        .auth-area {
+            .welcome {
                 display: inline-block;
                 font-size: 1.4rem;
                 color: var(--muted);
             }
-            .btn{
+            .btn {
                 margin-left: 1rem;
             }
         }
