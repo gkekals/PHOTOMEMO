@@ -1,41 +1,35 @@
-import { useState,useCallback,useEffect } from "react";
-import {createPost} from "../api/postApi"
+import { useState, useCallback, useEffect } from "react";
+import { createPost, fetchMyPosts } from "../api/postApi";
 
+export function usePosts() {
+    const [items, setItems] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-export function usePosts(){
-
-    const [items, setItems]=useState([])
-    const [loading, setLoading]=useState(false)
-
-
-    const load = useCallback(async()=>{
-        setLoading(true)
+    const load = useCallback(async () => {
+        setLoading(true);
 
         try {
-            
+            const list = await fetchMyPosts();
+            setItems(list);
         } catch (error) {
-            
+            setLoading(false);
         }
+    });
 
+    const add = useCallback(async ({ title, content, fileKeys = [] }) => {
+        const created = await createPost({ title, content, fileKeys });
 
-    })
+        setItems((prev) => [created, ...prev]);
 
-    const add = useCallback(async({title, content, fileKeys=[]})=>{
+        return created;
+    }, []);
 
-        const created = await createPost({title, content, fileKeys})
-
-
-        setItems((prev)=>[created,...prev])
-    
-        return created
-    
-    },[])
-
+    useEffect(() => { load() }, [load])
 
     return {
         items,
         loading,
         load,
-        add
-    }
+        add,
+    };
 }

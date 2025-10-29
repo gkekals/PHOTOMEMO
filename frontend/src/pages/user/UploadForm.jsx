@@ -17,63 +17,63 @@ const UploadForm = ({
     const panelRef = useRef(null)
 
 
-    const handleFileChange=(e)=>{
+    const handleFileChange = (e) => {
 
         const file = e.target.files?.[0]
 
-        if(!file) return
+        if (!file) return
 
-        if(form.preview) URL.revokeObjectURL(form.preview)
-        const previewUrl =URL.createObjectURL(file)
+        if (form.preview) URL.revokeObjectURL(form.preview)
+        const previewUrl = URL.createObjectURL(file)
 
-        setForm((prev)=>({...prev, file, preview:previewUrl}))
+        setForm((prev) => ({ ...prev, file, preview: previewUrl }))
 
 
     }
-    const handleSubmit=async(e)=>{
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
-        if(!form.title.trim()){
+        if (!form.title.trim()) {
             console.warn('title empty')
             alert('제목을 입력하세요')
-        
+
             return
         }
-        if(uploading) return
+        if (uploading) return
 
         try {
             setUploading(true)
 
             await onUploaded?.({
-                title:form.title.trim(),
-                content:form.content.trim(),
-                file:form.file
+                title: form.title.trim(),
+                content: form.content.trim(),
+                file: form.file
             })
 
-            if(form.preview) URL.revokeObjectURL(form.preview)
+            if (form.preview) URL.revokeObjectURL(form.preview)
 
-                setForm({
-                    title:"",
-                    content:"",
-                    file:null,
-                    preview:null
-                })
+            setForm({
+                title: "",
+                content: "",
+                file: null,
+                preview: null
+            })
 
-                onClose?.()
+            onClose?.()
         } catch (error) {
-            
-            console.error('submit error',error)
-        }finally{
+
+            console.error('submit error', error)
+        } finally {
             setUploading(false)
         }
 
     }
     return (
         <section className='am-backdrop'>
-            <form 
-            ref={panelRef}
-            onSubmit={handleSubmit}
-            className='am-panel Upload-form'>
+            <form
+                ref={panelRef}
+                onSubmit={handleSubmit}
+                className='am-panel Upload-form'>
                 <header>
                     <h2>파일 업로드</h2>
                     <p className="sub">이미지와 간단한 메모를 함께 업로드 하세요</p>
@@ -83,11 +83,11 @@ const UploadForm = ({
                         <label htmlFor="title">제목</label>
                         <input
                             id='title'
-                            name='title'
                             type="text"
+                            name='title'
                             value={form.title}
-                            onChange={(e)=>{
-                                setForm((prev)=>({...prev,title:e.target.value}))
+                            onChange={(e) => {
+                                setForm((prev) => ({ ...prev, title: e.target.value }))
                             }}
                             placeholder='제목을 입력하세요' />
                     </div>
@@ -97,8 +97,8 @@ const UploadForm = ({
                             id='content'
                             name='content'
                             value={form.content}
-                            onChange={(e)=>{
-                                setForm((prev)=>({...prev,content:e.target.value}))
+                            onChange={(e) => {
+                                setForm((prev) => ({ ...prev, content: e.target.value }))
                             }}
                             placeholder='간단한 설명을 적어주세요'
                             rows={3}
@@ -112,9 +112,9 @@ const UploadForm = ({
                                 name='file'
                                 onChange={handleFileChange}
                             />
-                            {form.preview &&(
+                            {form.preview && (
                                 <div className='preview-wrap'>
-                                    <img src={form.preview} alt="미리보기" className='preview-thumb'/>
+                                    <img src={form.preview} alt="미리보기" className='preview-thumb' />
                                     <p className="file-name">{form.file?.name}</p>
                                 </div>
                             )}
@@ -123,11 +123,11 @@ const UploadForm = ({
                 </div>
                 <div className="actions">
                     <button className="btn ghost">취소</button>
-                    <button 
-                    type='submit'
-                    disabled={uploading}
-                    className="btn primary">
-                        {uploading? "업로드 중...":"업로드"}
+                    <button
+                        type='submit'
+                        disabled={uploading}
+                        className="btn primary">
+                        {uploading ? "업로드 중..." : "업로드"}
                     </button>
                 </div>
             </form>
