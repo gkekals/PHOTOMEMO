@@ -1,13 +1,14 @@
+
 import './App.scss'
 import { useState, useEffect } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate,useLocation } from 'react-router-dom'
 import AuthPanel from './components/AuthPanel'
 import Landing from './pages/Landing'
 import Header from './components/Header'
 import ProtectRoute from './components/ProtectRoute'
+import UserDashboard from './pages/user/UserDashboard'
 import AdminDashboard from './pages/admin/AdminDashboard'
-import UserDashboard from './pages/user/userDashboard'
-
+import {PostProvider} from "./context/PostProvider"
 import {
   fetchMe as apiFetchMe,
   logout as apiLogout,
@@ -72,6 +73,7 @@ function App() {
   }, [isAuthed])
 
   return (
+    <PostProvider>
     <div className="page">
       {showHeader && <Header
       isAuthed={isAuthed}
@@ -125,6 +127,7 @@ function App() {
         <Route path='*' element={<Navigate to="/" replace />}/>
       </Routes>
     </div>
+    </PostProvider>
   )
 }
 
