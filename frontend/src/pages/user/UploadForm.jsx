@@ -102,72 +102,73 @@ const UploadForm = ({
     }
   };
 
-  return (
-    <section className='am-backdrop'>
-      <form
-        ref={panelRef}
-        onSubmit={handleSubmit}
-        className='am-panel Upload-form'>
-        <header>
-          <h2>파일 업로드</h2>
-          <p className="sub">이미지와 간단한 메모를 함께 업로드 하세요</p>
-        </header>
-        <div className="form-grid">
-          <div className="field">
-            <label htmlFor="title">제목</label>
+
+return (
+  <section className='am-backdrop'>
+    <form
+      ref={panelRef}
+      onSubmit={handleSubmit}
+      className='am-panel Upload-form'>
+      <header>
+        <h2>곡 감상 업로드</h2>
+        <p className="sub">앨범 커버 이미지와 감상 메모를 등록해 보세요</p>
+      </header>
+      <div className="form-grid">
+        <div className="field">
+          <label htmlFor="title">곡명 / 앨범명</label>
+          <input
+            id='title'
+            type="text"
+            name='title'
+            value={form.title}
+            onChange={(e) => {
+              setForm((prev) => ({ ...prev, title: e.target.value }))
+            }}
+            placeholder='곡명이나 앨범명을 입력하세요' />
+        </div>
+        <div className="field">
+          <label htmlFor="content">감상 메모</label>
+          <textarea
+            id='content'
+            name='content'
+            value={form.content}
+            onChange={(e) => {
+              setForm((prev) => ({ ...prev, content: e.target.value }))
+            }}
+            placeholder='느낀 점, 상황 등 자유롭게 적어보세요'
+            rows={3}
+          />
+        </div>
+        <div className="field">
+          <div className="file-row">
             <input
-              id='title'
-              type="text"
-              name='title'
-              value={form.title}
-              onChange={(e) => {
-                setForm((prev) => ({ ...prev, title: e.target.value }))
-              }}
-              placeholder='제목을 입력하세요' />
-          </div>
-          <div className="field">
-            <label htmlFor="content">내용</label>
-            <textarea
-              id='content'
-              name='content'
-              value={form.content}
-              onChange={(e) => {
-                setForm((prev) => ({ ...prev, content: e.target.value }))
-              }}
-              placeholder='간단한 설명을 적어주세요'
-              rows={3}
+              accept='image/*'
+              type="file"
+              name='file'
+              onChange={handleFileChange}
             />
-          </div>
-          <div className="field">
-            <div className="file-row">
-              <input
-                accept='image/*'
-                type="file"
-                name='file'
-                onChange={handleFileChange}
-              />
-              {form.preview && (
-                <div className='preview-wrap'>
-                  <img src={form.preview} alt="미리보기" className='preview-thumb' />
-                  <p className="file-name">{form.file?.name}</p>
-                </div>
-              )}
-            </div>
+            {form.preview && (
+              <div className='preview-wrap'>
+                <img src={form.preview} alt="앨범 커버 미리보기" className='preview-thumb' />
+                <p className="file-name">{form.file?.name}</p>
+              </div>
+            )}
           </div>
         </div>
-        <div className="actions">
-          <button className="btn ghost" onClick={() => onClose(false)}>취소</button>
-          <button
-            type='submit'
-            disabled={uploading}
-      
-            className="btn primary">
-            {uploading ? "업로드 중..." : "업로드"}
-          </button>
-        </div>
-      </form>
-    </section>
-  )
+      </div>
+      <div className="actions">
+        <button className="btn ghost" onClick={() => onClose(false)}>닫기</button>
+        <button
+          type='submit'
+          disabled={uploading}
+          className="btn primary">
+          {uploading ? "업로드 중..." : "감상 저장"}
+        </button>
+      </div>
+    </form>
+  </section>
+)
+
 }
 
 export default UploadForm
