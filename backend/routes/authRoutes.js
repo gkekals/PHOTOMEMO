@@ -2,10 +2,14 @@ const express = require("express")
 const router = express.Router()
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
+const passport= require('../config/passport')
 const User = require("../models/User")
 const { authenticateToken } = require('../middlewares/auth'); // ✅ 변경됨: auth → authenticateToken 명시적 미들웨어 사용
 const LOCK_MAX = 5
-const LOCKOUT_DURATION_MS = 10 * 60 * 1000
+const LOCKOUT_DURATION_MS = 10*60*1000
+
+const FRONT_ORIGIN=process.env.FRONT_ORIGIN
+const JWT_SECRET=process.env.JWT_SECRET
 
 
 function makeToken(user) {
@@ -191,7 +195,6 @@ router.post("/login", async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
-
         // 10 성공 응답: 사용자 정보 +토큰+ 참조용 카운트 
         return res.status(200).json({
             user: typeof user.toSafeJSON() === 'function' ? user.toSafeJSON() : {
@@ -213,6 +216,30 @@ router.post("/login", async (req, res) => {
         })
     }
 })
+
+router.get('/kakao',passport.authenticate('kakao'))
+
+router.get('/kakao/callback',(req, res,next)=>{
+    passport.authenticate('kakao',{
+        session:false
+    },async(err, user, info)=>{
+        if(err){
+            console.error('kakao error',err)
+            return res.status(500).json({message:"카카오 인증 에러"})
+        }
+        if(!user){
+            console.warn('카카오 로그인 실패',info)
+            return res.redirect(`${FRONT_ORIGIN}/admin/login?error=kakao`)
+
+        }
+        const token = makeToken(user)
+        const redirectUrl = `${FRONT_ORIGIN}/oauth/kakao?token=${token}`
+
+        console.log('kakao redirect',redirectUrl)
+        return res.redirect(redirectUrl)
+    })(req, res, next)
+})
+
 
 router.use(authenticateToken)
 

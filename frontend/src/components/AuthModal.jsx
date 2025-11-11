@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import "./style/AuthModal.scss"
-import api from '../api/client'
+import api, { BASE_URL } from '../api/client'
+
+const KakaoIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="#FFEB00"
+  >
+    <path d="M12 2C6.477 2 2 6.066 2 11.267c0 3.11 2.045 5.848 5.11 7.14v3.37l3.601-2.065a9.742 9.742 0 0 0 1.289.118c5.523 0 10-4.066 10-9.267S17.523 2 12 2z" />
+  </svg>
+)
+
 const AuthModal = ({
   open,
   onClose,
   onAuthed
 }) => {
-
   const [mode, setMode] = useState('register')
 
   const [attemptInfo, setAttemptInfo] = useState({
@@ -18,17 +30,19 @@ const AuthModal = ({
   const [form, setForm] = useState({
     email: '',
     password: '',
-    isplayName: ''
+    displayName: ''
   })
 
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState('')
 
+  const handleKakaoLogin = () => {
+    window.location.href = `${BASE_URL}/api/auth/kakao`
+  }
 
   useEffect(() => {
-
     if (!open) {
-      setMode('register');
+      setMode('register')
       setForm({
         email: '',
         password: '',
@@ -37,7 +51,6 @@ const AuthModal = ({
       setLoading(false)
       setErr('')
     }
-
   }, [open])
 
   useEffect(() => {
@@ -53,36 +66,29 @@ const AuthModal = ({
 
   const handleChange = (e) => {
     const { name, value } = e.target
-
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
   const submit = async (e) => {
     e.preventDefault()
-
     if (loading) return
 
     setErr('')
     setLoading(true)
 
     try {
-      // 1 보낼 데이터 구성
-      const payload = mode == 'register' ? {
+      const payload = mode === 'register' ? {
         email: form.email.trim(),
         password: form.password.trim(),
         displayName: form.displayName.trim()
       } : {
         email: form.email.trim(),
-        password: form.password.trim(),
+        password: form.password.trim()
       }
 
-      //2. api url 선택
       const url = mode === 'register' ? '/api/auth/register' : '/api/auth/login'
-
-      // 3. backend 요청
       const { data } = await api.post(url, payload)
 
-      // 4.로그인 시도 정보 초기화
       setAttemptInfo({
         attempts: null,
         remaining: null,
@@ -90,14 +96,10 @@ const AuthModal = ({
       })
       setErr('')
 
-      // 5 부모 컴포넌트에 인증 성공 결과 전달
-      onAuthed?.(data) //{user, token}
+      onAuthed?.(data)
       onClose?.()
-
     } catch (error) {
-
       const d = error?.response?.data || {}
-
       const msg = error?.response?.data?.message ||
         (mode === 'register' ? '회원가입 실패' : '로그인 실패')
 
@@ -106,23 +108,16 @@ const AuthModal = ({
         remaining: typeof d.remainingAttempts === 'number' ? d.remainingAttempts : null,
         locked: !!d.locked
       })
-
       setErr(msg)
       console.log('auth fail', error?.response?.status, error?.response?.data)
-
     } finally {
-
       setLoading(false)
     }
-
-
   }
-
 
   const handleBackdropClick = () => {
     if (!loading) onClose?.()
   }
-
 
   return (
     <div className='am-backdrop' onClick={handleBackdropClick}>
@@ -144,9 +139,7 @@ const AuthModal = ({
           </button>
         </div>
         <form className='am-form' onSubmit={submit}>
-
           {mode === 'register' && (
-
             <input
               type="text"
               name='displayName'
@@ -169,7 +162,6 @@ const AuthModal = ({
             placeholder='비밀번호'
             required
           />
-          {/* 에러 메세지 출력 */}
           {err && (
             <div className={`am-msg  ${attemptInfo.locked ? 'warn' : 'error'}`} role='alert'>
               {err}
@@ -179,24 +171,29 @@ const AuthModal = ({
             <div className="am-msg warn">
               유효성 검증 실패로 로그인이 차단 되었습니다. 관리자에게 문의하세요.
             </div>
-          ):attemptInfo.attempts  !=null?(
+          ) : attemptInfo.attempts != null ? (
             <div className='am-subtle'>
-              로그인 실패 횟수:{attemptInfo.attempts}/5
-              {typeof attemptInfo.remaining==='number' && `(남은 시도: ${attemptInfo.remaining})`}
+              로그인 실패 횟수: {attemptInfo.attempts} / 5
+              {typeof attemptInfo.remaining === 'number' && ` (남은 시도: ${attemptInfo.remaining})`}
             </div>
           ) : null}
-
-          <button 
-          type='submit'
-          disabled={loading || attemptInfo.locked}
-          className="btn primary">
-            {loading?'처리중...':(mode==='register'?'가입하기':'로그인')}
+          <button
+            type='submit'
+            disabled={loading || attemptInfo.locked}
+            className="btn primary">
+            {loading ? '처리중...' : (mode === 'register' ? '가입하기' : '로그인')}
+          </button>
+          <button
+            type='button'
+            onClick={handleKakaoLogin}
+            className='btn kakao-btn'
+          >
+            <KakaoIcon />
+            카카오 로그인
           </button>
         </form>
-
         <button type='button' onClick={onClose} className='am-close btn' aria-label='닫기'>X</button>
       </div>
-
     </div>
   )
 }
